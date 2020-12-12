@@ -78,14 +78,17 @@ class GetInfo(object):
         if province in ('shaanxi' , 'qinghai') :
             body = body[:-2]
             
-        html = etree.HTML(body.decode('utf-8'))
+        html = etree.HTML(body.decode('utf-8', 'ignore'))
         piece_list = html.xpath('//table[@id="GridViewOrder"]/tr')
         
         results = self.parse(piece_list)
         province_info_temp = province_info_shared[province]
-        province_info_temp.update({"cmcc" : results.get('cmcc')[0]})
-        province_info_temp.update({"telcom" : results.get('telcom')[0]})
-        province_info_temp.update({"unicom" : results.get('unicom')[0]})
+        if results.get('cmcc') and len(results.get('cmcc')) > 0:
+            province_info_temp.update({"cmcc" : results.get('cmcc')[0]})
+        if results.get('telcom') and len(results.get('telcom')) > 0:
+            province_info_temp.update({"telcom" : results.get('telcom')[0]})
+        if results.get('unicom') and len(results.get('unicom')) > 0:
+            province_info_temp.update({"unicom" : results.get('unicom')[0]})
         province_info_shared[province] = province_info_temp
         
     def parse(self , piece_list):
